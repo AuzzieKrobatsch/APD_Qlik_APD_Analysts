@@ -1,0 +1,69 @@
+//Replace with a Report Details Template filled out
+////Report Details
+Let vReportName = 'Analyst - Vehicle All';
+
+////Report Description
+Let vReportDescription = 'The purpose is to give analysts access to all the fields in the view with the same names and filters as the Discoverer query tool.';
+
+// Report owner
+Let vReportOwner = 'APD Information Systems';
+
+//Change History Log changes in this area to help people know what has changed
+Let vReportChanges = '';
+
+Let vVersionNumber = '1.0';
+
+//Publish date
+let vPublishDates = '1.0 - 07/29/2020';
+
+
+//Page descriptions for passing the explanation of each page. 
+Let vReadMeDescription ='This page allows users of the data to be exposed to the source information such as any transformation of source datbase views etc. It also exposes the information about the QVD at the time of reload.';
+Let vConditionsPage1 = 'This allows the user to make similiar condition selections as they did in Discoverer';
+Let vConditionsPage2 = '';
+Let vBuilderPage1 = 'This sheet allows users to see a resulting table and what the selections are. Users can export the table from this table with the current columns. It is also possible that the user can duplicate this sheet and create a new table with their own columns.';
+Let vBuilderPage2 = '';
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+/////////Part 2 load the qvd//////////////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+Qualify 'Meta*';
+[Vehicle All]:
+load *
+from 
+[lib://APD QVDs - BusinessTechnology/BusinessTechnology\QVDs\APDIOD\Transform\Vehicle All.qvd]
+(qvd)
+;
+right join
+[General Offense]:
+LOAD
+    *
+FROM 
+
+[lib://APD QVDs - BusinessTechnology/BusinessTechnology/QVDs/APDIOD/Transform/General Offense.qvd]
+ (qvd)
+;
+
+/////////////////////////////////////////////////
+//////////////////////////////////////////////////
+/////////Part 3 load data dictionary//////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+[Data Dictionary]:
+LOAD
+*
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/QVDs/APDIOD/Transform/Documentation/Vehicle All_Ready.xlsx]
+(ooxml, embedded labels, table is Dimensions);
+Concatenate
+LOAD
+*
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/QVDs/APDIOD/Transform/Documentation/General Offense Folder.xlsx]
+(ooxml, embedded labels, table is Dimensions);
+Concatenate
+LOAD
+*
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/QVDs/APDIOD/Transform/Documentation/General Offense Folder.xlsx]
+(ooxml, embedded labels, table is Filters);

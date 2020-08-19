@@ -1,0 +1,125 @@
+
+Let vReportName = 'Analyst - General Offense Businesses';
+
+////Report Description
+Let vReportDescription = 'The purpose is to give analysts access to all the fields in the view with the same names and filters as the Discoverer query tool. ';
+
+// Report owner
+Let vReportOwner = 'APD Information Systems';
+
+//Change History Log changes in this area to help people know what has changed
+Let vReportChanges = '';
+
+Let vVersionNumber = '1.0';
+
+//Publish date
+let vPublishDates = '1.0 - 07/23/2020';
+
+
+
+//Page descriptions for passing the explanation of each page. 
+Let vReadMeDescription ='This page allows users of the data to be exposed to the source information such as any transformation of source datbase views etc. It also exposes the information about the QVD at the time of reload.';
+Let vConditionsPage1 = 'This allows the user to make similiar condition selections as they did in Discoverer';
+Let vConditionsPage2 = '';
+Let vBuilderPage1 = 'This sheet allows users to see a resulting table and what the selections are. Users can export the table from this table with the current columns. It is also possible that the user can duplicate this sheet and create a new table with their own columns.';
+Let vBuilderPage2 = '';
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+/////////Part 2 load the qvd//////////////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+Qualify 'Meta*';
+[General Offense]:
+LOAD
+    *
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/QVDs/APDIOD/Transform/General Offense.qvd]
+(qvd);
+
+right keep
+
+LOAD
+ *
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/QVDs/APDIOD/Transform/General Offenses Businesses.qvd]
+(qvd);
+
+/////////////////////////////////////////////////
+//////////////////////////////////////////////////
+/////////Part 3 load data dictionary//////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+[Data Dictionary]:
+LOAD
+    "Original Source Table Name",
+    "Original Source Column Name",
+    "Datawarehouse Source Table Name",
+    "Datawarehouse Source Column Name",
+    "Discoverer Description",
+    "Discoverer Folder Name",
+    "Discoverer Name",
+    "Business User Description",
+    "Qlik Hidden",
+    "Qlik Table Name",
+    "Qlik Source Field/Code",
+    "Qlik Field Name"
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/Documentation/Transform - Arrest Booking with Charges/Arrest Booking with Charges updated.xlsx]
+(ooxml, embedded labels, table is [Columns or Dimensions]);
+
+Concatenate
+load *,
+//All the filters are Derived from data that already exists in the load. 
+	'Derived' as "Original Source Table Name",
+    'Derived' as "Original Source Column Name"
+;
+LOAD
+    "Datawarehouse Source Table Name",
+    "Datawarehouse Source Column Name",
+    "Discoverer Name",
+    "Discoverer Description",
+    "Discoverer Folder Name",
+    "Qlik Field Name",
+    "Qlik Source Field/Code",
+    "Qlik Table Name",
+    "Qlik Hidden",
+    "Business User Description"
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/Documentation/Transform - Arrest Booking with Charges/Arrest Booking with Charges updated.xlsx]
+(ooxml, embedded labels, table is Filters);
+
+Concatenate
+LOAD
+    "Original Source Table Name",
+    "Original Source Column Name",
+    "Datawarehouse Source Table Name",
+    "Datawarehouse Source Column Name",
+    "Discoverer Description",
+    "Discoverer Folder Name",
+    "Discoverer Name",
+    "Business User Description",
+     Notes,
+    "Qlik Table Name",
+    "Qlik Source Field/Code",
+    "Qlik Field Name"
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/Documentation/Transform - General Offense/General Offense FolderDocument updated.xlsx]
+(ooxml, embedded labels, table is Dimensions);
+
+Concatenate
+load *,
+//All the filters are Derived from data that already exists in the load. 
+	'Derived' as "Original Source Table Name",
+    'Derived' as "Original Source Column Name",
+    'Derived' as "Datawarehouse Source Table Name",
+    'Derived' as "Datawarehouse Source Column Name"
+;
+LOAD
+    "Discoverer Folder Name",
+    "Discoverer Name",
+    "Discoverer Description",
+    "Qlik Field Name",
+    "Qlik Source Field/Code",
+    "Qlik Table Name",
+    "Qlik Hidden",
+    "Business User Description"
+FROM [lib://APD QVDs - BusinessTechnology/BusinessTechnology/Documentation/Transform - General Offense/General Offense FolderDocument updated.xlsx]
+(ooxml, embedded labels, table is Filters);
